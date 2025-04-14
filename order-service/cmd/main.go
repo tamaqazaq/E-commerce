@@ -3,10 +3,14 @@ package main
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"google.golang.org/grpc"
+	"net"
 	"order-service/config"
+	grpcserver "order-service/internal/adapter/grpc/server"
 	"order-service/internal/adapter/handler"
 	"order-service/internal/adapter/postgres"
 	"order-service/internal/app/service"
+	pb "order-service/proto"
 )
 
 func main() {
@@ -26,8 +30,21 @@ func main() {
 		panic(err)
 	}
 
+	orderService := service.NewOrderService(repo)
+	go func() {
+		listener, err := net.Listen("tcp", ":50052")
+		if err != nil {
+			panic(err)
+		}
+		grpcServer := grpc.NewServer()
+		pb.RegisterOrderServiceServer(grpcServer, grpcserver.NewOrderGRPCServer(orderService))
+		fmt.Println("gRPC server started on port 50052")
+		if err := grpcServer.Serve(listener); err != nil {
+			panic(err)
+		}
+	}()
+
 	r := gin.Default()
-	usecase := service.NewOrderService(repo)
-	handler.NewOrderHandler(r, usecase)
+	handler.NewOrderHandler(r, orderService)
 	r.Run(":8082")
 }

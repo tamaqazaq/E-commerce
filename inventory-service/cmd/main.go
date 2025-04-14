@@ -3,10 +3,14 @@ package main
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"google.golang.org/grpc"
 	"inventory-service/config"
+	grpcserver "inventory-service/internal/adapter/grpc/server"
 	"inventory-service/internal/adapter/handler"
 	"inventory-service/internal/adapter/postgres"
 	"inventory-service/internal/app/service"
+	pb "inventory-service/proto"
+	"net"
 )
 
 func main() {
@@ -21,19 +25,27 @@ func main() {
 		config.GetEnv("DB_NAME"),
 	)
 
-	productRepo, err := postgres.NewPostgresProductRepository(dsn)
+	repo, err := postgres.NewPostgresProductRepository(dsn)
 	if err != nil {
 		panic(err)
 	}
 
+	productService := service.NewProductService(repo)
+
+	go func() {
+		listener, err := net.Listen("tcp", ":50051")
+		if err != nil {
+			panic(err)
+		}
+		grpcServer := grpc.NewServer()
+		pb.RegisterInventoryServiceServer(grpcServer, grpcserver.NewInventoryGRPCServer(productService))
+		fmt.Println("gRPC server started on port 50051")
+		if err := grpcServer.Serve(listener); err != nil {
+			panic(err)
+		}
+	}()
+
 	r := gin.Default()
-
-	productService := service.NewProductService(productRepo)
 	handler.NewProductHandler(r, productService)
-
-	discountRepo := postgres.NewPostgresDiscountRepository(productRepo.GetDB())
-	discountService := service.NewDiscountService(discountRepo)
-	handler.NewDiscountHandler(r, discountService)
-
 	r.Run(":8081")
 }
