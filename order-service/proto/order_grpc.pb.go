@@ -11,6 +11,7 @@ import (
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -23,6 +24,9 @@ const (
 	OrderService_GetOrderByID_FullMethodName      = "/order.OrderService/GetOrderByID"
 	OrderService_UpdateOrderStatus_FullMethodName = "/order.OrderService/UpdateOrderStatus"
 	OrderService_ListUserOrders_FullMethodName    = "/order.OrderService/ListUserOrders"
+	OrderService_CreateReview_FullMethodName      = "/order.OrderService/CreateReview"
+	OrderService_UpdateReview_FullMethodName      = "/order.OrderService/UpdateReview"
+	OrderService_DeleteReview_FullMethodName      = "/order.OrderService/DeleteReview"
 )
 
 // OrderServiceClient is the client API for OrderService service.
@@ -33,6 +37,9 @@ type OrderServiceClient interface {
 	GetOrderByID(ctx context.Context, in *GetOrderRequest, opts ...grpc.CallOption) (*OrderResponse, error)
 	UpdateOrderStatus(ctx context.Context, in *UpdateOrderStatusRequest, opts ...grpc.CallOption) (*OrderResponse, error)
 	ListUserOrders(ctx context.Context, in *ListOrdersRequest, opts ...grpc.CallOption) (*ListOrdersResponse, error)
+	CreateReview(ctx context.Context, in *CreateReviewRequest, opts ...grpc.CallOption) (*ReviewResponse, error)
+	UpdateReview(ctx context.Context, in *UpdateReviewRequest, opts ...grpc.CallOption) (*ReviewResponse, error)
+	DeleteReview(ctx context.Context, in *DeleteReviewRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type orderServiceClient struct {
@@ -83,6 +90,36 @@ func (c *orderServiceClient) ListUserOrders(ctx context.Context, in *ListOrdersR
 	return out, nil
 }
 
+func (c *orderServiceClient) CreateReview(ctx context.Context, in *CreateReviewRequest, opts ...grpc.CallOption) (*ReviewResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ReviewResponse)
+	err := c.cc.Invoke(ctx, OrderService_CreateReview_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *orderServiceClient) UpdateReview(ctx context.Context, in *UpdateReviewRequest, opts ...grpc.CallOption) (*ReviewResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ReviewResponse)
+	err := c.cc.Invoke(ctx, OrderService_UpdateReview_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *orderServiceClient) DeleteReview(ctx context.Context, in *DeleteReviewRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, OrderService_DeleteReview_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // OrderServiceServer is the server API for OrderService service.
 // All implementations must embed UnimplementedOrderServiceServer
 // for forward compatibility.
@@ -91,6 +128,9 @@ type OrderServiceServer interface {
 	GetOrderByID(context.Context, *GetOrderRequest) (*OrderResponse, error)
 	UpdateOrderStatus(context.Context, *UpdateOrderStatusRequest) (*OrderResponse, error)
 	ListUserOrders(context.Context, *ListOrdersRequest) (*ListOrdersResponse, error)
+	CreateReview(context.Context, *CreateReviewRequest) (*ReviewResponse, error)
+	UpdateReview(context.Context, *UpdateReviewRequest) (*ReviewResponse, error)
+	DeleteReview(context.Context, *DeleteReviewRequest) (*emptypb.Empty, error)
 	mustEmbedUnimplementedOrderServiceServer()
 }
 
@@ -112,6 +152,15 @@ func (UnimplementedOrderServiceServer) UpdateOrderStatus(context.Context, *Updat
 }
 func (UnimplementedOrderServiceServer) ListUserOrders(context.Context, *ListOrdersRequest) (*ListOrdersResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListUserOrders not implemented")
+}
+func (UnimplementedOrderServiceServer) CreateReview(context.Context, *CreateReviewRequest) (*ReviewResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateReview not implemented")
+}
+func (UnimplementedOrderServiceServer) UpdateReview(context.Context, *UpdateReviewRequest) (*ReviewResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateReview not implemented")
+}
+func (UnimplementedOrderServiceServer) DeleteReview(context.Context, *DeleteReviewRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteReview not implemented")
 }
 func (UnimplementedOrderServiceServer) mustEmbedUnimplementedOrderServiceServer() {}
 func (UnimplementedOrderServiceServer) testEmbeddedByValue()                      {}
@@ -206,6 +255,60 @@ func _OrderService_ListUserOrders_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _OrderService_CreateReview_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateReviewRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrderServiceServer).CreateReview(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OrderService_CreateReview_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrderServiceServer).CreateReview(ctx, req.(*CreateReviewRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OrderService_UpdateReview_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateReviewRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrderServiceServer).UpdateReview(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OrderService_UpdateReview_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrderServiceServer).UpdateReview(ctx, req.(*UpdateReviewRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OrderService_DeleteReview_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteReviewRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrderServiceServer).DeleteReview(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OrderService_DeleteReview_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrderServiceServer).DeleteReview(ctx, req.(*DeleteReviewRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // OrderService_ServiceDesc is the grpc.ServiceDesc for OrderService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -228,6 +331,18 @@ var OrderService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListUserOrders",
 			Handler:    _OrderService_ListUserOrders_Handler,
+		},
+		{
+			MethodName: "CreateReview",
+			Handler:    _OrderService_CreateReview_Handler,
+		},
+		{
+			MethodName: "UpdateReview",
+			Handler:    _OrderService_UpdateReview_Handler,
+		},
+		{
+			MethodName: "DeleteReview",
+			Handler:    _OrderService_DeleteReview_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

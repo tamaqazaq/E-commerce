@@ -8,3 +8,8 @@ type OrderUsecase interface {
 	UpdateStatus(id, status string) error
 	ListByUser(userID string) ([]*model.Order, error)
 }
+type ReviewUsecase interface {
+	CreateReview(review *model.Review) error
+	UpdateReview(review *model.Review) error
+	DeleteReview(id string) error
+}

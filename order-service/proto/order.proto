@@ -1,8 +1,9 @@
 syntax = "proto3";
 
 package order;
-
 option go_package = "order-service/proto;proto";
+
+import "google/protobuf/empty.proto";
 
 message OrderItem {
   string id = 1;
@@ -45,9 +46,39 @@ message ListOrdersResponse {
   repeated Order orders = 1;
 }
 
+message Review {
+  string id = 1;
+  string product_id = 2;
+  string user_id = 3;
+  double rating = 4;
+  string comment = 5;
+  string created_at = 6;
+  string updated_at = 7;
+}
+
+message CreateReviewRequest {
+  Review review = 1;
+}
+
+message UpdateReviewRequest {
+  Review review = 1;
+}
+
+message DeleteReviewRequest {
+  string id = 1;
+}
+
+message ReviewResponse {
+  Review review = 1;
+}
+
 service OrderService {
   rpc CreateOrder(CreateOrderRequest) returns (OrderResponse);
   rpc GetOrderByID(GetOrderRequest) returns (OrderResponse);
   rpc UpdateOrderStatus(UpdateOrderStatusRequest) returns (OrderResponse);
   rpc ListUserOrders(ListOrdersRequest) returns (ListOrdersResponse);
+
+  rpc CreateReview(CreateReviewRequest) returns (ReviewResponse);
+  rpc UpdateReview(UpdateReviewRequest) returns (ReviewResponse);
+  rpc DeleteReview(DeleteReviewRequest) returns (google.protobuf.Empty);
 }

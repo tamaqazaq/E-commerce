@@ -9,6 +9,7 @@ package proto
 import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
@@ -445,11 +446,279 @@ func (x *ListOrdersResponse) GetOrders() []*Order {
 	return nil
 }
 
+type Review struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	ProductId     string                 `protobuf:"bytes,2,opt,name=product_id,json=productId,proto3" json:"product_id,omitempty"`
+	UserId        string                 `protobuf:"bytes,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	Rating        float64                `protobuf:"fixed64,4,opt,name=rating,proto3" json:"rating,omitempty"`
+	Comment       string                 `protobuf:"bytes,5,opt,name=comment,proto3" json:"comment,omitempty"`
+	CreatedAt     string                 `protobuf:"bytes,6,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UpdatedAt     string                 `protobuf:"bytes,7,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Review) Reset() {
+	*x = Review{}
+	mi := &file_order_proto_msgTypes[8]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Review) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Review) ProtoMessage() {}
+
+func (x *Review) ProtoReflect() protoreflect.Message {
+	mi := &file_order_proto_msgTypes[8]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Review.ProtoReflect.Descriptor instead.
+func (*Review) Descriptor() ([]byte, []int) {
+	return file_order_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *Review) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *Review) GetProductId() string {
+	if x != nil {
+		return x.ProductId
+	}
+	return ""
+}
+
+func (x *Review) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+func (x *Review) GetRating() float64 {
+	if x != nil {
+		return x.Rating
+	}
+	return 0
+}
+
+func (x *Review) GetComment() string {
+	if x != nil {
+		return x.Comment
+	}
+	return ""
+}
+
+func (x *Review) GetCreatedAt() string {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return ""
+}
+
+func (x *Review) GetUpdatedAt() string {
+	if x != nil {
+		return x.UpdatedAt
+	}
+	return ""
+}
+
+type CreateReviewRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Review        *Review                `protobuf:"bytes,1,opt,name=review,proto3" json:"review,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CreateReviewRequest) Reset() {
+	*x = CreateReviewRequest{}
+	mi := &file_order_proto_msgTypes[9]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateReviewRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateReviewRequest) ProtoMessage() {}
+
+func (x *CreateReviewRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_order_proto_msgTypes[9]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateReviewRequest.ProtoReflect.Descriptor instead.
+func (*CreateReviewRequest) Descriptor() ([]byte, []int) {
+	return file_order_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *CreateReviewRequest) GetReview() *Review {
+	if x != nil {
+		return x.Review
+	}
+	return nil
+}
+
+type UpdateReviewRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Review        *Review                `protobuf:"bytes,1,opt,name=review,proto3" json:"review,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UpdateReviewRequest) Reset() {
+	*x = UpdateReviewRequest{}
+	mi := &file_order_proto_msgTypes[10]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateReviewRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateReviewRequest) ProtoMessage() {}
+
+func (x *UpdateReviewRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_order_proto_msgTypes[10]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateReviewRequest.ProtoReflect.Descriptor instead.
+func (*UpdateReviewRequest) Descriptor() ([]byte, []int) {
+	return file_order_proto_rawDescGZIP(), []int{10}
+}
+
+func (x *UpdateReviewRequest) GetReview() *Review {
+	if x != nil {
+		return x.Review
+	}
+	return nil
+}
+
+type DeleteReviewRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeleteReviewRequest) Reset() {
+	*x = DeleteReviewRequest{}
+	mi := &file_order_proto_msgTypes[11]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteReviewRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteReviewRequest) ProtoMessage() {}
+
+func (x *DeleteReviewRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_order_proto_msgTypes[11]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteReviewRequest.ProtoReflect.Descriptor instead.
+func (*DeleteReviewRequest) Descriptor() ([]byte, []int) {
+	return file_order_proto_rawDescGZIP(), []int{11}
+}
+
+func (x *DeleteReviewRequest) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+type ReviewResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Review        *Review                `protobuf:"bytes,1,opt,name=review,proto3" json:"review,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ReviewResponse) Reset() {
+	*x = ReviewResponse{}
+	mi := &file_order_proto_msgTypes[12]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ReviewResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ReviewResponse) ProtoMessage() {}
+
+func (x *ReviewResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_order_proto_msgTypes[12]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ReviewResponse.ProtoReflect.Descriptor instead.
+func (*ReviewResponse) Descriptor() ([]byte, []int) {
+	return file_order_proto_rawDescGZIP(), []int{12}
+}
+
+func (x *ReviewResponse) GetReview() *Review {
+	if x != nil {
+		return x.Review
+	}
+	return nil
+}
+
 var File_order_proto protoreflect.FileDescriptor
 
 const file_order_proto_rawDesc = "" +
 	"\n" +
-	"\vorder.proto\x12\x05order\"\x87\x01\n" +
+	"\vorder.proto\x12\x05order\x1a\x1bgoogle/protobuf/empty.proto\"\x87\x01\n" +
 	"\tOrderItem\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x19\n" +
 	"\border_id\x18\x02 \x01(\tR\aorderId\x12\x1d\n" +
@@ -475,12 +744,34 @@ const file_order_proto_rawDesc = "" +
 	"\rOrderResponse\x12\"\n" +
 	"\x05order\x18\x01 \x01(\v2\f.order.OrderR\x05order\":\n" +
 	"\x12ListOrdersResponse\x12$\n" +
-	"\x06orders\x18\x01 \x03(\v2\f.order.OrderR\x06orders2\x9f\x02\n" +
+	"\x06orders\x18\x01 \x03(\v2\f.order.OrderR\x06orders\"\xc0\x01\n" +
+	"\x06Review\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1d\n" +
+	"\n" +
+	"product_id\x18\x02 \x01(\tR\tproductId\x12\x17\n" +
+	"\auser_id\x18\x03 \x01(\tR\x06userId\x12\x16\n" +
+	"\x06rating\x18\x04 \x01(\x01R\x06rating\x12\x18\n" +
+	"\acomment\x18\x05 \x01(\tR\acomment\x12\x1d\n" +
+	"\n" +
+	"created_at\x18\x06 \x01(\tR\tcreatedAt\x12\x1d\n" +
+	"\n" +
+	"updated_at\x18\a \x01(\tR\tupdatedAt\"<\n" +
+	"\x13CreateReviewRequest\x12%\n" +
+	"\x06review\x18\x01 \x01(\v2\r.order.ReviewR\x06review\"<\n" +
+	"\x13UpdateReviewRequest\x12%\n" +
+	"\x06review\x18\x01 \x01(\v2\r.order.ReviewR\x06review\"%\n" +
+	"\x13DeleteReviewRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\"7\n" +
+	"\x0eReviewResponse\x12%\n" +
+	"\x06review\x18\x01 \x01(\v2\r.order.ReviewR\x06review2\xe9\x03\n" +
 	"\fOrderService\x12>\n" +
 	"\vCreateOrder\x12\x19.order.CreateOrderRequest\x1a\x14.order.OrderResponse\x12<\n" +
 	"\fGetOrderByID\x12\x16.order.GetOrderRequest\x1a\x14.order.OrderResponse\x12J\n" +
 	"\x11UpdateOrderStatus\x12\x1f.order.UpdateOrderStatusRequest\x1a\x14.order.OrderResponse\x12E\n" +
-	"\x0eListUserOrders\x12\x18.order.ListOrdersRequest\x1a\x19.order.ListOrdersResponseB\x1bZ\x19order-service/proto;protob\x06proto3"
+	"\x0eListUserOrders\x12\x18.order.ListOrdersRequest\x1a\x19.order.ListOrdersResponse\x12A\n" +
+	"\fCreateReview\x12\x1a.order.CreateReviewRequest\x1a\x15.order.ReviewResponse\x12A\n" +
+	"\fUpdateReview\x12\x1a.order.UpdateReviewRequest\x1a\x15.order.ReviewResponse\x12B\n" +
+	"\fDeleteReview\x12\x1a.order.DeleteReviewRequest\x1a\x16.google.protobuf.EmptyB\x1bZ\x19order-service/proto;protob\x06proto3"
 
 var (
 	file_order_proto_rawDescOnce sync.Once
@@ -494,7 +785,7 @@ func file_order_proto_rawDescGZIP() []byte {
 	return file_order_proto_rawDescData
 }
 
-var file_order_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
+var file_order_proto_msgTypes = make([]protoimpl.MessageInfo, 13)
 var file_order_proto_goTypes = []any{
 	(*OrderItem)(nil),                // 0: order.OrderItem
 	(*Order)(nil),                    // 1: order.Order
@@ -504,25 +795,40 @@ var file_order_proto_goTypes = []any{
 	(*ListOrdersRequest)(nil),        // 5: order.ListOrdersRequest
 	(*OrderResponse)(nil),            // 6: order.OrderResponse
 	(*ListOrdersResponse)(nil),       // 7: order.ListOrdersResponse
+	(*Review)(nil),                   // 8: order.Review
+	(*CreateReviewRequest)(nil),      // 9: order.CreateReviewRequest
+	(*UpdateReviewRequest)(nil),      // 10: order.UpdateReviewRequest
+	(*DeleteReviewRequest)(nil),      // 11: order.DeleteReviewRequest
+	(*ReviewResponse)(nil),           // 12: order.ReviewResponse
+	(*emptypb.Empty)(nil),            // 13: google.protobuf.Empty
 }
 var file_order_proto_depIdxs = []int32{
-	0, // 0: order.Order.items:type_name -> order.OrderItem
-	1, // 1: order.CreateOrderRequest.order:type_name -> order.Order
-	1, // 2: order.OrderResponse.order:type_name -> order.Order
-	1, // 3: order.ListOrdersResponse.orders:type_name -> order.Order
-	2, // 4: order.OrderService.CreateOrder:input_type -> order.CreateOrderRequest
-	3, // 5: order.OrderService.GetOrderByID:input_type -> order.GetOrderRequest
-	4, // 6: order.OrderService.UpdateOrderStatus:input_type -> order.UpdateOrderStatusRequest
-	5, // 7: order.OrderService.ListUserOrders:input_type -> order.ListOrdersRequest
-	6, // 8: order.OrderService.CreateOrder:output_type -> order.OrderResponse
-	6, // 9: order.OrderService.GetOrderByID:output_type -> order.OrderResponse
-	6, // 10: order.OrderService.UpdateOrderStatus:output_type -> order.OrderResponse
-	7, // 11: order.OrderService.ListUserOrders:output_type -> order.ListOrdersResponse
-	8, // [8:12] is the sub-list for method output_type
-	4, // [4:8] is the sub-list for method input_type
-	4, // [4:4] is the sub-list for extension type_name
-	4, // [4:4] is the sub-list for extension extendee
-	0, // [0:4] is the sub-list for field type_name
+	0,  // 0: order.Order.items:type_name -> order.OrderItem
+	1,  // 1: order.CreateOrderRequest.order:type_name -> order.Order
+	1,  // 2: order.OrderResponse.order:type_name -> order.Order
+	1,  // 3: order.ListOrdersResponse.orders:type_name -> order.Order
+	8,  // 4: order.CreateReviewRequest.review:type_name -> order.Review
+	8,  // 5: order.UpdateReviewRequest.review:type_name -> order.Review
+	8,  // 6: order.ReviewResponse.review:type_name -> order.Review
+	2,  // 7: order.OrderService.CreateOrder:input_type -> order.CreateOrderRequest
+	3,  // 8: order.OrderService.GetOrderByID:input_type -> order.GetOrderRequest
+	4,  // 9: order.OrderService.UpdateOrderStatus:input_type -> order.UpdateOrderStatusRequest
+	5,  // 10: order.OrderService.ListUserOrders:input_type -> order.ListOrdersRequest
+	9,  // 11: order.OrderService.CreateReview:input_type -> order.CreateReviewRequest
+	10, // 12: order.OrderService.UpdateReview:input_type -> order.UpdateReviewRequest
+	11, // 13: order.OrderService.DeleteReview:input_type -> order.DeleteReviewRequest
+	6,  // 14: order.OrderService.CreateOrder:output_type -> order.OrderResponse
+	6,  // 15: order.OrderService.GetOrderByID:output_type -> order.OrderResponse
+	6,  // 16: order.OrderService.UpdateOrderStatus:output_type -> order.OrderResponse
+	7,  // 17: order.OrderService.ListUserOrders:output_type -> order.ListOrdersResponse
+	12, // 18: order.OrderService.CreateReview:output_type -> order.ReviewResponse
+	12, // 19: order.OrderService.UpdateReview:output_type -> order.ReviewResponse
+	13, // 20: order.OrderService.DeleteReview:output_type -> google.protobuf.Empty
+	14, // [14:21] is the sub-list for method output_type
+	7,  // [7:14] is the sub-list for method input_type
+	7,  // [7:7] is the sub-list for extension type_name
+	7,  // [7:7] is the sub-list for extension extendee
+	0,  // [0:7] is the sub-list for field type_name
 }
 
 func init() { file_order_proto_init() }
@@ -536,7 +842,7 @@ func file_order_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_order_proto_rawDesc), len(file_order_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   8,
+			NumMessages:   13,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

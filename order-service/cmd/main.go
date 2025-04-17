@@ -31,13 +31,16 @@ func main() {
 	}
 
 	orderService := service.NewOrderService(repo)
+	reviewService := service.NewReviewService(repo.(*postgres.PostgresRepo))
+
+	listener, err := net.Listen("tcp", ":50052")
+	if err != nil {
+		panic(err)
+	}
+	grpcServer := grpc.NewServer()
+	pb.RegisterOrderServiceServer(grpcServer, grpcserver.NewOrderGRPCServer(orderService, reviewService))
+
 	go func() {
-		listener, err := net.Listen("tcp", ":50052")
-		if err != nil {
-			panic(err)
-		}
-		grpcServer := grpc.NewServer()
-		pb.RegisterOrderServiceServer(grpcServer, grpcserver.NewOrderGRPCServer(orderService))
 		fmt.Println("gRPC server started on port 50052")
 		if err := grpcServer.Serve(listener); err != nil {
 			panic(err)

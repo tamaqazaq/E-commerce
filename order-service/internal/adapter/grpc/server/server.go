@@ -3,21 +3,31 @@ package server
 import (
 	"context"
 	"github.com/google/uuid"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 	"order-service/internal/model"
 	"order-service/internal/usecase"
 	pb "order-service/proto"
+	"time"
 )
 
 type OrderGRPCServer struct {
 	pb.UnimplementedOrderServiceServer
-	usecase usecase.OrderUsecase
+	usecase       usecase.OrderUsecase
+	reviewUsecase usecase.ReviewUsecase
 }
 
-func NewOrderGRPCServer(uc usecase.OrderUsecase) *OrderGRPCServer {
-	return &OrderGRPCServer{usecase: uc}
+func NewOrderGRPCServer(orderUC usecase.OrderUsecase, reviewUC usecase.ReviewUsecase) *OrderGRPCServer {
+	return &OrderGRPCServer{
+		usecase:       orderUC,
+		reviewUsecase: reviewUC,
+	}
 }
 
 func (s *OrderGRPCServer) CreateOrder(ctx context.Context, req *pb.CreateOrderRequest) (*pb.OrderResponse, error) {
+	if req.Order == nil {
+		return nil, status.Errorf(codes.InvalidArgument, "order field is required")
+	}
 	order := &model.Order{
 		ID:     uuid.New().String(),
 		UserID: req.Order.UserId,
@@ -112,4 +122,54 @@ func convertOrderItemsToPB(items []model.OrderItem) []*pb.OrderItem {
 		})
 	}
 	return pbItems
+}
+func (s *OrderGRPCServer) CreateReview(ctx context.Context, req *pb.CreateReviewRequest) (*pb.ReviewResponse, error) {
+	r := req.Review
+	if r.Rating < 1.0 || r.Rating > 5.0 {
+		return nil, status.Errorf(codes.InvalidArgument, "rating is invalid")
+	}
+	review := &model.Review{
+		ProductID: r.ProductId,
+		UserID:    r.UserId,
+		Rating:    r.Rating,
+		Comment:   r.Comment,
+	}
+	err := s.reviewUsecase.CreateReview(review)
+	if err != nil {
+		return nil, err
+	}
+	return &pb.ReviewResponse{Review: &pb.Review{
+		Id:        review.ID,
+		ProductId: review.ProductID,
+		UserId:    review.UserID,
+		Rating:    review.Rating,
+		Comment:   review.Comment,
+		CreatedAt: review.CreatedAt.Format(time.RFC3339),
+		UpdatedAt: review.UpdatedAt.Format(time.RFC3339),
+	}}, nil
+}
+
+func (s *OrderGRPCServer) UpdateReview(ctx context.Context, req *pb.UpdateReviewRequest) (*pb.ReviewResponse, error) {
+	r := req.Review
+	if r.Rating < 1.0 || r.Rating > 5.0 {
+		return nil, status.Errorf(codes.InvalidArgument, "rating is invalid")
+	}
+	review := &model.Review{
+		ID:      r.Id,
+		Rating:  r.Rating,
+		Comment: r.Comment,
+	}
+	err := s.reviewUsecase.UpdateReview(review)
+	if err != nil {
+		return nil, err
+	}
+	review.UpdatedAt = time.Now()
+	return &pb.ReviewResponse{Review: &pb.Review{
+		Id:        review.ID,
+		ProductId: review.ProductID,
+		UserId:    review.UserID,
+		Rating:    review.Rating,
+		Comment:   review.Comment,
+		UpdatedAt: review.UpdatedAt.Format(time.RFC3339),
+	}}, nil
 }
