@@ -11,5 +11,4 @@ type OrderUsecase interface {
 type ReviewUsecase interface {
 	CreateReview(review *model.Review) error
 	UpdateReview(review *model.Review) error
-	DeleteReview(id string) error
 }

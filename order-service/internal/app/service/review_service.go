@@ -28,7 +28,3 @@ func (s *ReviewService) UpdateReview(review *model.Review) error {
 	review.UpdatedAt = time.Now()
 	return s.repo.Update(review)
 }
-
-func (s *ReviewService) DeleteReview(id string) error {
-	return s.repo.Delete(id)
-}

@@ -7,7 +7,6 @@ import (
 type ReviewRepository interface {
 	Create(review *model.Review) error
 	Update(review *model.Review) error
-	Delete(id string) error
 }
 
 func (r *PostgresRepo) Create(review *model.Review) error {
