@@ -1,25 +1,21 @@
 package service
 
 import (
-	"encoding/json"
-	"fmt"
 	"github.com/google/uuid"
-	"github.com/nats-io/nats.go"
-	"order-service/internal/adapter/postgres"
 	"order-service/internal/model"
 	"order-service/internal/usecase"
 	"time"
 )
 
 type OrderService struct {
-	repo postgres.OrderRepository
-	nc   *nats.Conn
+	repo      usecase.OrderRepository
+	publisher usecase.EventPublisher
 }
 
-func NewOrderService(repo postgres.OrderRepository, nc *nats.Conn) usecase.OrderUsecase {
+func NewOrderService(repo usecase.OrderRepository, publisher usecase.EventPublisher) usecase.OrderUsecase {
 	return &OrderService{
-		repo: repo,
-		nc:   nc,
+		repo:      repo,
+		publisher: publisher,
 	}
 }
 
@@ -33,30 +29,12 @@ func (s *OrderService) Create(order *model.Order) error {
 	}
 	order.Total = total
 	order.Status = "pending"
+	order.Timestamp = time.Now()
 
 	if err := s.repo.Save(order); err != nil {
 		return err
 	}
-
-	event := map[string]interface{}{
-		"action": "order.created",
-		"time":   time.Now().Format(time.RFC3339),
-		"data": map[string]interface{}{
-			"order_id": order.ID,
-			"user_id":  order.UserID,
-			"total":    order.Total,
-		},
-	}
-	payload, err := json.Marshal(event)
-	if err != nil {
-		fmt.Println("Error marshaling order.created event:", err)
-		return nil
-	}
-	if err := s.nc.Publish("order.created", payload); err != nil {
-		fmt.Println("Error publishing order.created event:", err)
-	}
-
-	return nil
+	return s.publisher.PublishOrderCreated(order)
 }
 
 func (s *OrderService) GetByID(id string) (*model.Order, error) {
@@ -64,7 +42,14 @@ func (s *OrderService) GetByID(id string) (*model.Order, error) {
 }
 
 func (s *OrderService) UpdateStatus(id, status string) error {
-	return s.repo.UpdateStatus(id, status)
+	if err := s.repo.UpdateStatus(id, status); err != nil {
+		return err
+	}
+	order, err := s.repo.FindByID(id)
+	if err != nil {
+		return err
+	}
+	return s.publisher.PublishOrderUpdated(order)
 }
 
 func (s *OrderService) ListByUser(userID string) ([]*model.Order, error) {

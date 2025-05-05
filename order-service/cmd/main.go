@@ -3,12 +3,14 @@ package main
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
+	_ "github.com/lib/pq"
 	"github.com/nats-io/nats.go"
 	"google.golang.org/grpc"
 	"net"
 	"order-service/config"
 	grpcserver "order-service/internal/adapter/grpc/server"
 	"order-service/internal/adapter/handler"
+	"order-service/internal/adapter/nats"
 	"order-service/internal/adapter/postgres"
 	"order-service/internal/app/service"
 	pb "order-service/proto"
@@ -31,14 +33,15 @@ func main() {
 		panic(err)
 	}
 
-	// ✅ Подключение к NATS
 	nc, err := nats.Connect(nats.DefaultURL)
 	if err != nil {
 		panic(err)
 	}
 	defer nc.Close()
+	
+	publisher := natsadapter.NewNatsPublisher(nc)
 
-	orderService := service.NewOrderService(repo, nc)
+	orderService := service.NewOrderService(repo, publisher)
 	reviewService := service.NewReviewService(repo.(*postgres.PostgresRepo))
 
 	grpcServer := grpc.NewServer()

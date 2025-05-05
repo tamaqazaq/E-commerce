@@ -8,6 +8,7 @@ import (
 	"inventory-service/config"
 	grpcserver "inventory-service/internal/adapter/grpc/server"
 	"inventory-service/internal/adapter/handler"
+	"inventory-service/internal/adapter/nats" // 💡 пакет natsadapter
 	"inventory-service/internal/adapter/postgres"
 	"inventory-service/internal/app/service"
 	pb "inventory-service/proto"
@@ -37,7 +38,8 @@ func main() {
 	}
 	defer nc.Close()
 
-	productService := service.NewProductService(repo, nc)
+	publisher := natsadapter.NewNatsPublisher(nc)
+	productService := service.NewProductService(repo, publisher)
 
 	go func() {
 		listener, err := net.Listen("tcp", ":50051")
@@ -52,6 +54,7 @@ func main() {
 		}
 	}()
 
+	// HTTP server (optional)
 	r := gin.Default()
 	handler.NewProductHandler(r, productService)
 	r.Run(":8081")

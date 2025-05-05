@@ -20,9 +20,9 @@ func NewStatisticsRepository(dsn string) (*StatisticsRepo, error) {
 
 func (r *StatisticsRepo) SaveOrderEvent(event *model.OrderEvent) error {
 	_, err := r.db.Exec(`
-		INSERT INTO order_events (order_id, user_id, total, timestamp)
-		VALUES ($1, $2, $3, $4)`,
-		event.OrderID, event.UserID, event.Total, event.Timestamp)
+		INSERT INTO order_events (order_id, user_id, total, status, action, timestamp)
+		VALUES ($1, $2, $3, $4, $5, $6)`,
+		event.OrderID, event.UserID, event.Total, event.Status, event.Action, event.Timestamp)
 	if err != nil {
 		log.Println("SaveOrderEvent error:", err)
 	}

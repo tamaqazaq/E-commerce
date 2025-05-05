@@ -7,15 +7,6 @@ import (
 	"inventory-service/internal/model"
 )
 
-type ProductRepository interface {
-	Save(product *model.Product) error
-	FindByID(id string) (*model.Product, error)
-	Update(product *model.Product) error
-	Delete(id string) error
-	FindAll() ([]*model.Product, error)
-	GetDB() *sql.DB
-}
-
 type PostgresProductRepo struct {
 	db *sql.DB
 }

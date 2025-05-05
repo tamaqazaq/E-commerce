@@ -17,10 +17,8 @@ import (
 )
 
 func main() {
-	// Load env
 	config.LoadEnv()
 
-	// DB init
 	dsn := fmt.Sprintf(
 		"host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
 		config.GetEnv("DB_HOST"),
@@ -34,17 +32,14 @@ func main() {
 		log.Fatal("DB error: ", err)
 	}
 
-	// NATS connect
 	nc, err := nats.Connect(nats.DefaultURL)
 	if err != nil {
 		log.Fatal("NATS error: ", err)
 	}
 	defer nc.Close()
 
-	// Subscribe to NATS topics
 	natslistener.SubscribeToEvents(nc, repo)
 
-	// gRPC server
 	grpcServer := grpc.NewServer()
 	pb.RegisterStatisticsServiceServer(grpcServer, server.NewStatisticsGRPCServer(service.NewStatisticsService(repo)))
 

@@ -9,3 +9,10 @@ type ProductUsecase interface {
 	Delete(id string) error
 	List() ([]*model.Product, error)
 }
+type ProductRepository interface {
+	Save(product *model.Product) error
+	FindByID(id string) (*model.Product, error)
+	Update(product *model.Product) error
+	Delete(id string) error
+	FindAll() ([]*model.Product, error)
+}

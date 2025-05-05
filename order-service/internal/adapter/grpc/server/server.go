@@ -58,7 +58,6 @@ func (s *OrderGRPCServer) CreateOrder(ctx context.Context, req *pb.CreateOrderRe
 	if err := s.usecase.Create(order); err != nil {
 		return nil, err
 	}
-	// после err := s.usecase.Create(order)
 	event := struct {
 		UserID    string  `json:"user_id"`
 		OrderID   string  `json:"order_id"`

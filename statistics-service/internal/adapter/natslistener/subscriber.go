@@ -40,9 +40,45 @@ func SubscribeToEvents(nc *nats.Conn, repo usecase.StatisticsRepository) {
 			OrderID:   rawEvent.OrderID,
 			Total:     rawEvent.Total,
 			Timestamp: timestamp,
+			Action:    "created",
 		}
 
 		log.Printf("Saving order.CREATED event: %+v\n", event)
+		if err := repo.SaveOrderEvent(&event); err != nil {
+			log.Println("SaveOrderEvent error:", err)
+		}
+	})
+
+	subscribe(nc, "order.updated", func(data []byte) {
+		var raw map[string]interface{}
+		if err := json.Unmarshal(data, &raw); err != nil {
+			log.Println("Failed to parse order.updated event:", err)
+			return
+		}
+
+		dataMap, ok := raw["data"].(map[string]interface{})
+		if !ok {
+			log.Println("Missing data field in order.updated")
+			return
+		}
+
+		timestampStr, _ := dataMap["order_time"].(string)
+		t, err := time.Parse(time.RFC3339, timestampStr)
+		if err != nil {
+			log.Println("Invalid timestamp in order.updated:", err)
+			return
+		}
+
+		event := model.OrderEvent{
+			OrderID:   getString(dataMap["order_id"]),
+			UserID:    getString(dataMap["user_id"]),
+			Total:     getFloat(dataMap["total"]),
+			Status:    getString(dataMap["status"]),
+			Timestamp: t,
+			Action:    "updated",
+		}
+
+		log.Printf("Saving order.UPDATED event: %+v\n", event)
 		if err := repo.SaveOrderEvent(&event); err != nil {
 			log.Println("SaveOrderEvent error:", err)
 		}
