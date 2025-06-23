@@ -1,0 +1,78 @@
+version: '3.9'
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: ecommerce
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    restart: always
+
+  nats:
+    image: nats:latest
+    container_name: nats
+    ports:
+      - "4222:4222"
+    restart: always
+
+  inventory-service:
+    build: ./inventory-service
+    depends_on:
+      - postgres
+      - nats
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      DB_NAME: ecommerce
+    ports:
+      - "8081:8081"
+    restart: always
+
+  order-service:
+    build: ./order-service
+    depends_on:
+      - postgres
+      - nats
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      DB_NAME: ecommerce
+    ports:
+      - "8082:8082"
+    restart: always
+
+  statistics-service:
+    build: ./statistics-service
+    depends_on:
+      - postgres
+      - nats
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      DB_NAME: ecommerce
+    restart: always
+
+  api-gateway:
+    build: ./api-gateway
+    depends_on:
+      - inventory-service
+      - order-service
+      - statistics-service
+    ports:
+      - "8080:8080"
+    restart: always
+
+volumes:
+  pgdata:
