@@ -1,9 +1,12 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
+	"math/rand"
 	"net"
+	"time"
 
 	_ "github.com/lib/pq"
 	"github.com/nats-io/nats.go"
@@ -39,6 +42,33 @@ func main() {
 	defer nc.Close()
 
 	natslistener.SubscribeToEvents(nc, repo)
+
+	go func() {
+		for {
+			time.Sleep(10 * time.Second)
+
+			types := []string{"order", "item"}
+			messageType := types[rand.Intn(len(types))]
+
+			data := map[string]interface{}{
+				"event":  "hourly_stats_update",
+				"time":   time.Now().Format(time.RFC3339),
+				"source": "statistics-service",
+				"type":   messageType,
+			}
+			payload, err := json.Marshal(data)
+			if err != nil {
+				log.Println("Failed to marshal hourly stats update:", err)
+				continue
+			}
+			err = nc.Publish("ap2.statistics.event.updated", payload)
+			if err != nil {
+				log.Println("Failed to publish hourly stats update:", err)
+			} else {
+				log.Printf("Published hourly stats update (%s) to ap2.statistics.event.updated\n", messageType)
+			}
+		}
+	}()
 
 	grpcServer := grpc.NewServer()
 	pb.RegisterStatisticsServiceServer(grpcServer, server.NewStatisticsGRPCServer(service.NewStatisticsService(repo)))

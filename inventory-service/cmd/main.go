@@ -41,25 +41,26 @@ func main() {
 	defer nc.Close()
 
 	publisher := natsadapter.NewNatsPublisher(nc)
-	productCache := cache.NewInMemoryProductCache()
 
-	// 🟡 Initialize cache from DB
+	memCache := cache.NewInMemoryProductCache()
+	redisCache := cache.NewRedisProductCache()
+	productCache := cache.NewMultiCache(memCache, redisCache)
+
 	allProducts, err := repo.FindAll()
 	if err != nil {
 		panic(err)
 	}
 	productCache.LoadFromDB(allProducts)
 
-	// 🔁 Start cache refresh every 12 hours
 	go func() {
 		for {
 			time.Sleep(12 * time.Hour)
-			prods, err := repo.FindAll()
+			products, err := repo.FindAll()
 			if err != nil {
 				fmt.Println("Cache refresh failed:", err)
 				continue
 			}
-			productCache.LoadFromDB(prods)
+			productCache.LoadFromDB(products)
 			fmt.Println("Cache refreshed")
 		}
 	}()
@@ -80,6 +81,7 @@ func main() {
 	}()
 
 	r := gin.Default()
+	r.SetTrustedProxies(nil)
 	handler.NewProductHandler(r, productService)
 	r.Run(":8081")
 }

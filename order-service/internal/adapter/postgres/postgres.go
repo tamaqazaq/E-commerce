@@ -111,3 +111,35 @@ func (r *PostgresRepo) FindByUserID(userID string) ([]*model.Order, error) {
 	}
 	return orders, nil
 }
+func (r *PostgresRepo) FindAll() ([]*model.Order, error) {
+	query := `SELECT id, user_id, total, status, timestamp FROM orders`
+	rows, err := r.db.Query(query)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var orders []*model.Order
+	for rows.Next() {
+		order := &model.Order{}
+		if err := rows.Scan(&order.ID, &order.UserID, &order.Total, &order.Status, &order.Timestamp); err != nil {
+			return nil, err
+		}
+
+		itemQuery := `SELECT id, order_id, product_id, quantity, price FROM order_items WHERE order_id = $1`
+		itemRows, err := r.db.Query(itemQuery, order.ID)
+		if err != nil {
+			return nil, err
+		}
+		for itemRows.Next() {
+			item := model.OrderItem{}
+			if err := itemRows.Scan(&item.ID, &item.OrderID, &item.ProductID, &item.Quantity, &item.Price); err != nil {
+				return nil, err
+			}
+			order.Items = append(order.Items, item)
+		}
+		itemRows.Close()
+		orders = append(orders, order)
+	}
+	return orders, nil
+}

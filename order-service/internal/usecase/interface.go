@@ -14,6 +14,7 @@ type OrderRepository interface {
 	FindByID(id string) (*model.Order, error)
 	UpdateStatus(id, status string) error
 	FindByUserID(userID string) ([]*model.Order, error)
+	FindAll() ([]*model.Order, error)
 }
 
 type ReviewUsecase interface {

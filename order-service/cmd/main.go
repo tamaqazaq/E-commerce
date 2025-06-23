@@ -8,9 +8,10 @@ import (
 	"google.golang.org/grpc"
 	"net"
 	"order-service/config"
+	"order-service/internal/adapter/cache"
 	grpcserver "order-service/internal/adapter/grpc/server"
 	"order-service/internal/adapter/handler"
-	"order-service/internal/adapter/nats"
+	natsadapter "order-service/internal/adapter/nats"
 	"order-service/internal/adapter/postgres"
 	"order-service/internal/app/service"
 	pb "order-service/proto"
@@ -38,10 +39,16 @@ func main() {
 		panic(err)
 	}
 	defer nc.Close()
-	
+
 	publisher := natsadapter.NewNatsPublisher(nc)
 
-	orderService := service.NewOrderService(repo, publisher)
+	memCache := cache.NewInMemoryOrderCache()
+	allOrders, err := repo.FindAll()
+	if err != nil {
+		panic(err)
+	}
+	memCache.LoadFromDB(allOrders)
+	orderService := service.NewOrderService(repo, publisher, memCache)
 	reviewService := service.NewReviewService(repo.(*postgres.PostgresRepo))
 
 	grpcServer := grpc.NewServer()

@@ -10,12 +10,14 @@ import (
 type OrderService struct {
 	repo      usecase.OrderRepository
 	publisher usecase.EventPublisher
+	cache     usecase.OrderCache
 }
 
-func NewOrderService(repo usecase.OrderRepository, publisher usecase.EventPublisher) usecase.OrderUsecase {
+func NewOrderService(repo usecase.OrderRepository, publisher usecase.EventPublisher, cache usecase.OrderCache) usecase.OrderUsecase {
 	return &OrderService{
 		repo:      repo,
 		publisher: publisher,
+		cache:     cache,
 	}
 }
 
@@ -34,11 +36,18 @@ func (s *OrderService) Create(order *model.Order) error {
 	if err := s.repo.Save(order); err != nil {
 		return err
 	}
+	//return fmt.Errorf("db is disabled: cannot save order")
+	s.cache.Save(order)
 	return s.publisher.PublishOrderCreated(order)
+
 }
 
 func (s *OrderService) GetByID(id string) (*model.Order, error) {
+	if o, ok := s.cache.GetByID(id); ok {
+		return o, nil
+	}
 	return s.repo.FindByID(id)
+	//return nil, fmt.Errorf("not found in cache")
 }
 
 func (s *OrderService) UpdateStatus(id, status string) error {
@@ -49,9 +58,14 @@ func (s *OrderService) UpdateStatus(id, status string) error {
 	if err != nil {
 		return err
 	}
+	s.cache.Update(order)
 	return s.publisher.PublishOrderUpdated(order)
 }
 
 func (s *OrderService) ListByUser(userID string) ([]*model.Order, error) {
+	if list, ok := s.cache.ListByUser(userID); ok {
+		return list, nil
+	}
 	return s.repo.FindByUserID(userID)
+	//return nil, fmt.Errorf("not found in cache")
 }
