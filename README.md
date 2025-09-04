@@ -27,7 +27,7 @@ All client requests go through the API Gateway, which communicates with internal
 
 ## Tech Stack
 
-- **Language:** Go 1.22  
+- **Language:** Go 1.23.4
 - **Framework:** Gin (for REST API)  
 - **RPC Protocol:** gRPC  
 - **Database:** PostgreSQL  
